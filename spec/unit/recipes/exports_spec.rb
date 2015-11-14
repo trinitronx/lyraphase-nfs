@@ -31,6 +31,10 @@ describe 'lyraphase-nfs::exports' do
       expect(chef_run).to include_recipe 'nfs::server4'
     end
 
+    it 'creates /export directory' do
+      expect(chef_run).to create_directory('/export').with_user('root')
+    end
+
     it 'converges successfully' do
       expect{chef_run}.to_not raise_error
     end
@@ -39,7 +43,7 @@ describe 'lyraphase-nfs::exports' do
   context "when list of exports given" do
     nfs_exports = [
         {'path' => '/export', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => ['fsid=0','insecure','no_subtree_check'] },
-        {'path' => '/export/src-test-nfsv4', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => ['nohide','insecure','no_subtree_check'] }
+        {'path' => '/export/src-test-nfsv4', 'src_path' => '/home/trinitronx/src', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => ['nohide','insecure','no_subtree_check'] }
     ]
 
     let(:chef_run) do
@@ -53,7 +57,18 @@ describe 'lyraphase-nfs::exports' do
       expect(chef_run).to include_recipe 'nfs::server4'
     end
 
+    it 'creates /export directory' do
+      expect(chef_run).to create_directory('/export').with_user('root')
+    end
+
     nfs_exports.each do |export|
+      if export.has_key? 'src_path'
+        it "bind mounts path #{export['src_path']} into #{export['path']}" do
+          expect(chef_run).to mount_mount(export['path']).with(device: export['src_path'], pass: 0, dump: 0, fstype: 'none', options: 'bind' )
+          expect(chef_run).to enable_mount(export['path']).with(device: export['src_path'], pass: 0, dump: 0, fstype: 'none', options: 'bind' )
+        end
+      end
+
       it "installs export #{export['path']}" do
         expect(chef_run).to create_nfs_export(export['path'])
       end
