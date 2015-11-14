@@ -41,19 +41,19 @@ describe 'lyraphase-nfs::default' do
     {platform: 'amazon', version: '2014.09', packages: ['nfs-utils',  'rpcbind'], services: ['portmap', 'nfslock']},
     {platform: 'centos', version: '6.5',     packages: ['nfs-utils',  'rpcbind'], services: ['portmap', 'nfslock']},
     {platform: 'centos', version: '5.9',     packages: ['nfs-utils',  'portmap'], services: ['portmap', 'nfslock']}
-  ].each |os| do
-    context "on #{os.platform.capitalize} #{os.version}" do
+  ].each do |os|
+    context "on #{os[:platform].capitalize} #{os[:version]}" do
       let(:chef_run) do
         ChefSpec::ServerRunner.new(os).converge(described_recipe)
       end
   
-      os.packages.each do |pkg|
+      os[:packages].each do |pkg|
         it "installs package #{pkg}" do
           expect(chef_run).to install_package(pkg)
         end
       end
   
-      os.services.each do |svc|
+      os[:services].each do |svc|
         it "starts the #{svc} service" do
           expect(chef_run).to start_service(svc)
         end
