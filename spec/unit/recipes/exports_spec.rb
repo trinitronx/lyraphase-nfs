@@ -27,19 +27,19 @@ describe 'lyraphase-nfs::exports' do
       runner.converge(described_recipe)
     end
 
-    it 'should include nfs::server4 recipe' do
-      expect { chef_run }.to include_recipe 'nfs::server4'
+    it 'includes nfs::server4 recipe' do
+      expect(chef_run).to include_recipe 'nfs::server4'
     end
 
     it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
+      expect{chef_run}.to_not raise_error
     end
   end
 
-  context "when attributes set with list of exports" do
+  context "when list of exports given" do
     nfs_exports = [
-        {'path' => '/export', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => 'fsid=0,insecure,no_subtree_check' },
-        {'path' => '/export/src-test-nfsv4', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => 'nohide,insecure,no_subtree_check' }
+        {'path' => '/export', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => ['fsid=0','insecure','no_subtree_check'] },
+        {'path' => '/export/src-test-nfsv4', 'network' => '192.168.1.100/24', 'writeable' => true, 'sync' => true, 'options' => ['nohide','insecure','no_subtree_check'] }
     ]
 
     let(:chef_run) do
@@ -49,8 +49,8 @@ describe 'lyraphase-nfs::exports' do
       runner.converge(described_recipe)
     end
 
-    it 'should include nfs::server4 recipe' do
-      expect { chef_run }.to include_recipe 'nfs::server4'
+    it 'includes nfs::server4 recipe' do
+      expect(chef_run).to include_recipe 'nfs::server4'
     end
 
     nfs_exports.each do |export|
