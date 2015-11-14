@@ -27,20 +27,24 @@ describe 'lyraphase-nfs::default' do
       runner.converge(described_recipe)
     end
 
+    it 'includes nfs::client4 recipe' do
+      expect(chef_run).to include_recipe 'nfs::client4'
+    end
+
     it 'converges successfully' do
       expect { chef_run }.to_not raise_error
     end
   end
 
   [
-    {platform: 'ubuntu', version: '14.04',   packages: ['nfs-common', 'rpcbind'], services: ['portmap', 'statd']},
-    {platform: 'ubuntu', version: '12.04',   packages: ['nfs-common', 'rpcbind'], services: ['rpcbind-boot', 'statd']},
-    {platform: 'ubuntu', version: '10.04',   packages: ['nfs-common', 'rpcbind'], services: ['rpcbind', 'statd']},
-    {platform: 'debian', version: '6.0.5',   packages: ['nfs-common', 'portmap'], services: ['nfs-common', 'portmap']},
-    {platform: 'debian', version: '7.2',     packages: ['nfs-common', 'rpcbind'], services: ['nfs-common', 'rpcbind']},
-    {platform: 'amazon', version: '2014.09', packages: ['nfs-utils',  'rpcbind'], services: ['portmap', 'nfslock']},
-    {platform: 'centos', version: '6.5',     packages: ['nfs-utils',  'rpcbind'], services: ['portmap', 'nfslock']},
-    {platform: 'centos', version: '5.9',     packages: ['nfs-utils',  'portmap'], services: ['portmap', 'nfslock']}
+    {platform: 'ubuntu', version: '14.04',   packages: ['nfs-common', 'rpcbind'], services: ['portmap', 'statd', 'idmap']},
+    {platform: 'ubuntu', version: '12.04',   packages: ['nfs-common', 'rpcbind'], services: ['rpcbind-boot', 'statd', 'idmap']},
+    {platform: 'ubuntu', version: '10.04',   packages: ['nfs-common', 'rpcbind'], services: ['rpcbind', 'statd', 'idmap']},
+    {platform: 'debian', version: '6.0.5',   packages: ['nfs-common', 'portmap'], services: ['nfs-common', 'portmap', 'idmap']},
+    {platform: 'debian', version: '7.2',     packages: ['nfs-common', 'rpcbind'], services: ['nfs-common', 'rpcbind', 'idmap']},
+    {platform: 'amazon', version: '2014.09', packages: ['nfs-utils',  'rpcbind'], services: ['portmap', 'nfslock', 'idmap']},
+    {platform: 'centos', version: '6.5',     packages: ['nfs-utils',  'rpcbind'], services: ['portmap', 'nfslock', 'idmap']},
+    {platform: 'centos', version: '5.9',     packages: ['nfs-utils',  'portmap'], services: ['portmap', 'nfslock', 'idmap']}
   ].each do |os|
     context "on #{os[:platform].capitalize} #{os[:version]}" do
       let(:chef_run) do
