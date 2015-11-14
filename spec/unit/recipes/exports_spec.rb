@@ -64,8 +64,8 @@ describe 'lyraphase-nfs::exports' do
     nfs_exports.each do |export|
       if export.has_key? 'src_path'
         it "bind mounts path #{export['src_path']} into #{export['path']}" do
-          expect(chef_run).to mount_mount(export['path']).with(device: export['src_path'], pass: 0, dump: 0, fstype: 'none', options: 'bind' )
-          expect(chef_run).to enable_mount(export['path']).with(device: export['src_path'], pass: 0, dump: 0, fstype: 'none', options: 'bind' )
+          expect(chef_run).to mount_mount(export['path']).with(device: export['src_path'], pass: 0, dump: 0, fstype: 'none', options: ['bind'] )
+          expect(chef_run).to enable_mount(export['path']).with(device: export['src_path'], pass: 0, dump: 0, fstype: 'none', options: ['bind'] )
         end
       end
 
