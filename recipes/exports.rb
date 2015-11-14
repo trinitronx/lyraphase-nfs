@@ -19,8 +19,25 @@
 
 include_recipe 'nfs::server4'
 
+directory '/export' do
+  owner 'root'
+  group 'root'
+  mode  '0755'
+end
+
 unless node['lyraphase-nfs']['nfs_exports'].nil? || node['lyraphase-nfs']['nfs_exports'].empty?
   node['lyraphase-nfs']['nfs_exports'].each do |export|
+    if export.has_key? 'src_path'
+      mount export['path'] do
+        device export['src_path']
+        fstype 'none'
+        pass 0
+        dump 0
+        options 'bind'
+        action [:mount, :enable]
+      end
+    end
+
     nfs_export export['path'] do
       network   export['network']   if export.has_key? 'network'
       writeable export['writeable'] if export.has_key? 'writeable'
