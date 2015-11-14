@@ -27,7 +27,7 @@ end
 
 unless node['lyraphase-nfs']['nfs_exports'].nil? || node['lyraphase-nfs']['nfs_exports'].empty?
   node['lyraphase-nfs']['nfs_exports'].each do |export|
-    if export.has_key? 'src_path'
+    if export.has_key? 'src_path' # ignore FC023
       mount export['path'] do
         device export['src_path']
         fstype 'none'
