@@ -19,7 +19,7 @@
 
 include_recipe 'nfs::server4'
 
-if node['lyraphase-nfs'].has_key? 'nfs_exports' && ! node['lyraphase-nfs']['nfs_exports'].nil?
+unless node['lyraphase-nfs']['nfs_exports'].nil? || node['lyraphase-nfs']['nfs_exports'].empty?
   node['lyraphase-nfs']['nfs_exports'].each do |export|
     nfs_export export['path'] do
       network   export['network']   if export.has_key? 'network'
@@ -28,6 +28,7 @@ if node['lyraphase-nfs'].has_key? 'nfs_exports' && ! node['lyraphase-nfs']['nfs_
       anonuser  export['anonuser']  if export.has_key? 'anonuser'
       anongroup export['anongroup'] if export.has_key? 'anongroup'
       options   export['options']   if export.has_key? 'options'
+      action :create
     end
   end
 end
